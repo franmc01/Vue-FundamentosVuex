@@ -10,7 +10,6 @@
 
 <script>
 import store from "../store/index";
-import api from "../api/shop";
 
 export default {
   name: "AppProductList",
@@ -20,9 +19,11 @@ export default {
     }
   },
   created() {
-    api.getProducts(productos => {
-      store.commit('setProductos', productos);
-    });
+    try{
+      store.dispatch('getProducts');
+    }catch (e) {
+      console.log(e)
+    }
   }
 }
 </script>

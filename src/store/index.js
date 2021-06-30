@@ -1,4 +1,5 @@
 import { createStore } from 'vuex'
+import api from "../api/shop";
 
 export default createStore({
   state: {
@@ -10,6 +11,14 @@ export default createStore({
     }
   },
   actions: {
+    getProducts(context){
+      return new Promise((resolve, reject) => {
+        api.getProducts(productos => {
+          context.commit('setProductos', productos);
+          resolve();
+        });
+      })
+    }
   },
   modules: {
   }
