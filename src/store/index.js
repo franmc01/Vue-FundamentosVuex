@@ -20,6 +20,11 @@ export default createStore({
       })
     }
   },
+  getters: {
+    productsOnStock(state){
+      return state.productos.filter(producto => (producto.inventory > 0));
+    }
+  },
   modules: {
   }
 })
