@@ -1,12 +1,14 @@
 <template>
-  <h1>Tienda Sisco</h1>
-  <hr/>
-  <ul>
-    <li v-for="product in productos" :key="product.id">
-      {{ product.title }} | $ {{ product.price }} |
-      <i>{{ product.inventory }} unidades </i>
-    </li>
-  </ul>
+  <div>
+    <h2>Productos</h2>
+    <hr/>
+    <ul>
+      <li v-for="product in productos" :key="product.id">
+        {{ product.title }} | $ {{ product.price }} |
+        <i>{{ product.inventory }} unidades </i>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>
@@ -21,9 +23,9 @@ export default {
     }
   },
   created() {
-    try{
+    try {
       store.dispatch('getProducts');
-    }catch (e) {
+    } catch (e) {
       console.log(e)
     }
   }
@@ -33,11 +35,5 @@ export default {
 <style scoped>
 ul {
   text-align: left;
-}
-.sold-out {
-  background-color: lightpink;
-  border: 3px solid tomato;
-  padding: 0.3rem;
-  margin: 0.1rem;
 }
 </style>
