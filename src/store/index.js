@@ -2,28 +2,35 @@ import {createStore} from 'vuex'
 import api from "../api/shop";
 
 export default createStore({
-    state: {
+    state: { // = data
         productos: [],
         carrito: []
     },
+    /*Las mutaciones son responsables de cambios de estado individuales; un cambio de estado individual podría ser "actualizar" el
+      arreglo products en nuestro store.
+      Las mutaciones deberían ser lo más simple posible y son deben ser el único medio para actualizar el estado
+     */
     mutations: {
         setProductos(state, productos) {
             state.productos = productos;
         },
-        incrementProductQuantity(state, existe) {
-            existe.quantity++;
-        },
-        addToCart(state, producto) {
+        pushProductToCart(state, productId) {
             state.carrito.push({
-                id: producto.id,
-                quantity: producto.quantity
+                id: productId,
+                quantity: 1
             });
+        },
+        incrementItemQuantity(state, cartItem) {
+            cartItem.quantity++;
         },
         decrementProductInventory(state, producto) {
             producto.inventory--;
         }
     },
     actions: {
+        /* = methods, al principio se suele confundir con las mutaciones (me paso a mi :v), sin embargo no es asi ya las actions son
+        aquellas que deciden cuándo se activa una mutación.
+        */
         getProducts(context) {
             return new Promise((resolve) => {
                 api.getProducts(productos => {
@@ -33,23 +40,19 @@ export default createStore({
             })
         },
         addProductToCart(context, producto) {
-            //Verificar si hay inventario
-            if (producto.inventory === 0) return;
-            //Verificar si existe el producto en el carrito
-            const existe = context.state.carrito.find(item => item.id === producto.id);
-            if (existe) {
-                //Si es así, añadir uno más a la compra
-                context.commit('incrementProductQuantity', existe);
-            } else {
-                //Caso contrario, el producto al carrito
-                context.commit('addToCart', producto);
+            if (producto.inventory > 0) {
+                const cartItem = context.state.carrito.find(item => item.id === producto.id);
+                if (!cartItem) {
+                    context.commit('pushProductToCart', producto.id);
+                } else {
+                    context.commit('incrementItemQuantity', cartItem);
+                }
+                context.commit('decrementProductInventory', producto);
             }
-            //Independientemente, restar el inventario del producto
-            context.commit('decrementProductInventory', producto);
         }
 
     },
-    getters: {
+    getters: { // = computed properties, por lo que tambien rastrean sus propias dependencias y se actualizan automáticamente cuando una dependencia cambia.
         productsOnStock(state) {
             return state.productos.filter(product => {
                 return product.inventory > 0;
