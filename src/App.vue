@@ -1,13 +1,17 @@
 <template>
-  <AppProductList />
+  <AppProductList/>
+  <AppShoppingCart/>
 </template>
 
 <script>
 import AppProductList from "./components/AppProductList";
-export  default  {
+import AppShoppingCart from "./components/AppShoppingCart";
+
+export default {
   name: 'App',
   components: {
-    AppProductList
+    AppProductList,
+    AppShoppingCart
   }
 }
 </script>
@@ -19,18 +23,13 @@ export  default  {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
 }
 
-#nav {
-  padding: 30px;
+#app > * {
+  flex-basis: 49%;
 }
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
 </style>
