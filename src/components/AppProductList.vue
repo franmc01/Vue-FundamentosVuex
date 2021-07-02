@@ -5,7 +5,8 @@
     <ul>
       <li v-for="product in productos" :key="product.id">
         {{ product.title }} | $ {{ product.price }} |
-        <i>{{ product.inventory }} unidades </i>
+        <i>{{ product.inventory }} &nbsp;</i>
+        <button @click="addToCart(product)">Cart</button>
       </li>
     </ul>
   </div>
@@ -16,19 +17,24 @@ import store from "../store/index";
 
 export default {
   name: "AppProductList",
+  async created() {
+    try {
+      await store.dispatch("getProducts");
+    } catch (error) {
+      console.error(error);
+    }
+  },
   computed: {
     productos() {
       //return store.state.productos;
       return store.getters.productsOnStock;
     }
   },
-  created() {
-    try {
-      store.dispatch('getProducts');
-    } catch (e) {
-      console.log(e)
+  methods: {
+    addToCart(product) {
+      store.dispatch('addProductToCart', product);
     }
-  }
+  },
 }
 </script>
 
