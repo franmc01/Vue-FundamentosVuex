@@ -23,12 +23,23 @@ export default createStore({
         incrementItemQuantity(state, cartItem) {
             cartItem.quantity++;
         },
+        decrementItemQuantity(state, cartItem) {
+            let product = state.productos.find((product) => product.id === cartItem.id);
+            let cartProduct = state.carrito.find((product) => product.id === cartItem.id);
+
+            cartProduct.quantity--;
+            if (cartProduct.quantity === 0) {
+                let cartProductIndex = state.carrito.indexOf(cartProduct);
+                state.carrito.splice(cartProductIndex, 1);
+            }
+            product.inventory += 1;
+        },
         decrementProductInventory(state, producto) {
             producto.inventory--;
         },
-        removeProductFromCart(state, productItem){
+        removeProductFromCart(state, productItem) {
             let product = state.productos.find((product) => product.id === productItem.id);
-            let cartProductIndex = state.carrito.indexOf( productItem );
+            let cartProductIndex = state.carrito.indexOf(productItem);
 
             product.inventory += productItem.quantity;
             state.carrito.splice(cartProductIndex, 1);
@@ -59,6 +70,9 @@ export default createStore({
         },
         removeProductFromCart(context, productItem) {
             context.commit('removeProductFromCart', productItem);
+        },
+        decrementItemQuantity(context, productItem) {
+            context.commit('decrementItemQuantity', productItem);
         }
 
     },
@@ -70,8 +84,8 @@ export default createStore({
         },
         productsOnCart(state) {
             return state.carrito.map(item => {
-                const producto  = state.productos.find(product => product.id === item.id);
-                return{
+                const producto = state.productos.find(product => product.id === item.id);
+                return {
                     id: producto.id,
                     price: producto.price,
                     title: producto.title,
