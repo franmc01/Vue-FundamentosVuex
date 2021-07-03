@@ -58,6 +58,24 @@ export default createStore({
                 return product.inventory > 0;
             });
         },
+        productsOnCart(state) {
+            return state.carrito.map(item => {
+                const producto  = state.productos.find(product => product.id === item.id);
+                return{
+                    id: producto.id,
+                    price: producto.price,
+                    title: producto.title,
+                    quantity: item.quantity
+                }
+            });
+        },
+        cartTotal(state, getters) {
+            let total = 0;
+            getters.productsOnCart.forEach(product => {
+                total += product.price * product.quantity;
+            })
+            return total;
+        }
     },
     modules: {}
 })
