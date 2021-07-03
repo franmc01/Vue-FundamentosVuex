@@ -25,6 +25,13 @@ export default createStore({
         },
         decrementProductInventory(state, producto) {
             producto.inventory--;
+        },
+        removeProductFromCart(state, productItem){
+            let product = state.productos.find((product) => product.id === productItem.id);
+            let cartProductIndex = state.carrito.indexOf( productItem );
+
+            product.inventory += productItem.quantity;
+            state.carrito.splice(cartProductIndex, 1);
         }
     },
     actions: {
@@ -49,6 +56,9 @@ export default createStore({
                 }
                 context.commit('decrementProductInventory', producto);
             }
+        },
+        removeProductFromCart(context, productItem) {
+            context.commit('removeProductFromCart', productItem);
         }
 
     },
@@ -74,7 +84,7 @@ export default createStore({
             getters.productsOnCart.forEach(product => {
                 total += product.price * product.quantity;
             })
-            return total;
+            return total.toFixed(2);
         }
     },
     modules: {}

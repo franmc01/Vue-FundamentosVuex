@@ -6,7 +6,9 @@
     <ul v-else>
       <li v-for="productItem in carrito" :key="productItem.id">
         {{ productItem.title }} ({{productItem.quantity}})
-        <button>X</button>
+        <button @click="disminuirCantidadDelProductoCarrito(productItem.id)">-</button>
+        &nbsp;
+        <button @click="eliminarProductoCarrito(productItem)">X</button>
       </li>
     </ul>
     <p>Total: ${{ total }} </p>
@@ -22,6 +24,14 @@ export default {
     },
     total(){
       return this.$store.getters.cartTotal;
+    }
+  },
+  methods: {
+    eliminarProductoCarrito(productItem) {
+      this.$store.dispatch('removeProductFromCart', productItem);
+    },
+    disminuirCantidadDelProductoCarrito(productItem){
+      this.$store.dispatch('decrementProductQuantityFromCart', productItem);
     }
   },
 }
