@@ -56,30 +56,30 @@ export default createStore({
         /* = methods, al principio se suele confundir con las mutaciones (me paso a mi :v), sin embargo no es asi ya las actions son
         aquellas que deciden cuándo se activa una mutación.
         */
-        getProducts(context) {
+        getProducts({commit}) {
             return new Promise((resolve) => {
                 api.getProducts(productos => {
-                    context.commit('setProductos', productos);
+                    commit('setProductos', productos);
                     resolve();
                 });
             })
         },
-        addProductToCart(context, producto) {
-            if (producto.inventory > 0) {
-                const cartItem = context.state.carrito.find(item => item.id === producto.id);
+        addProductToCart({state, commit, getters}, producto) {
+            if (getters.productIsInStock) {
+                const cartItem = state.carrito.find(item => item.id === producto.id);
                 if (!cartItem) {
-                    context.commit('pushProductToCart', producto.id);
+                    commit('pushProductToCart', producto.id);
                 } else {
-                    context.commit('incrementItemQuantity', cartItem);
+                    commit('incrementItemQuantity', cartItem);
                 }
-                context.commit('decrementProductInventory', producto);
+                commit('decrementProductInventory', producto);
             }
         },
-        removeProductFromCart(context, productItem) {
-            context.commit('removeProductFromCart', productItem);
+        removeProductFromCart({commit}, productItem) {
+            commit('removeProductFromCart', productItem);
         },
-        decrementItemQuantity(context, productItem) {
-            context.commit('decrementItemQuantity', productItem);
+        decrementItemQuantity({commit}, productItem) {
+            commit('decrementItemQuantity', productItem);
         },
         checkout({state, commit}){
             api.buyProducts(
@@ -118,6 +118,11 @@ export default createStore({
                 total += product.price * product.quantity;
             })
             return total.toFixed(2);
+        },
+        productIsInStock(){
+            return (product) => {
+                return product.inventory > 0;
+            }
         }
     },
     modules: {}
