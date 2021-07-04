@@ -4,7 +4,8 @@ import api from "../api/shop";
 export default createStore({
     state: { // = data
         productos: [],
-        carrito: []
+        carrito: [],
+        checkoutStatus: null
     },
     /*Las mutaciones son responsables de cambios de estado individuales; un cambio de estado individual podría ser "actualizar" el
       arreglo products en nuestro store.
@@ -43,6 +44,12 @@ export default createStore({
 
             product.inventory += productItem.quantity;
             state.carrito.splice(cartProductIndex, 1);
+        },
+        setCheckoutStatus(state, status){
+            state.checkoutStatus = status;
+        },
+        emptyCart(state){
+            state.carrito = [];
         }
     },
     actions: {
@@ -73,6 +80,18 @@ export default createStore({
         },
         decrementItemQuantity(context, productItem) {
             context.commit('decrementItemQuantity', productItem);
+        },
+        checkout({state, commit}){
+            api.buyProducts(
+                state.productos,
+                ()=>{
+                    commit('emptyCart');
+                    commit('setCheckoutStatus', 'success');
+                },
+                ()=>{
+                    commit('setCheckoutStatus', 'fail');
+                }
+            )
         }
 
     },
