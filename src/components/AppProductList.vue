@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     ...mapState({
-      productos: 'productos'
+      productos: state => state.productos.productos
     }),
     // productos() {
     //   return store.state.productos;
