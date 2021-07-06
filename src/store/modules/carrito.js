@@ -89,5 +89,8 @@ export default {
             })
             return total.toFixed(2);
         },
+        isCartEmpty(state){
+            return (state.items.length === 0);
+        }
     }
 }
