@@ -1,5 +1,5 @@
 import {createStore} from 'vuex'
-import api from "../api/shop";
+import actions from './actions'
 
 export default createStore({
     state: { // = data
@@ -52,49 +52,7 @@ export default createStore({
             state.carrito = [];
         }
     },
-    actions: {
-        /* = methods, al principio se suele confundir con las mutaciones (me paso a mi :v), sin embargo no es asi ya las actions son
-        aquellas que deciden cuándo se activa una mutación.
-        */
-        getProducts({commit}) {
-            return new Promise((resolve) => {
-                api.getProducts(productos => {
-                    commit('setProductos', productos);
-                    resolve();
-                });
-            })
-        },
-        addProductToCart({state, commit, getters}, producto) {
-            if (getters.productIsInStock) {
-                const cartItem = state.carrito.find(item => item.id === producto.id);
-                if (!cartItem) {
-                    commit('pushProductToCart', producto.id);
-                } else {
-                    commit('incrementItemQuantity', cartItem);
-                }
-                commit('decrementProductInventory', producto);
-            }
-        },
-        removeProductFromCart({commit}, productItem) {
-            commit('removeProductFromCart', productItem);
-        },
-        decrementItemQuantity({commit}, productItem) {
-            commit('decrementItemQuantity', productItem);
-        },
-        checkout({state, commit}){
-            api.buyProducts(
-                state.productos,
-                ()=>{
-                    commit('emptyCart');
-                    commit('setCheckoutStatus', 'success');
-                },
-                ()=>{
-                    commit('setCheckoutStatus', 'fail');
-                }
-            )
-        }
-
-    },
+    actions,
     getters: { // = computed properties, por lo que tambien rastrean sus propias dependencias y se actualizan automáticamente cuando una dependencia cambia.
         productsOnStock(state) {
             return state.productos.filter(product => {
