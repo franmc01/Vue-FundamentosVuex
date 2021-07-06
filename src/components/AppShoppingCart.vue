@@ -12,7 +12,7 @@
       </li>
     </ul>
     <p>Total: ${{ total }} </p>
-    <button @click="checkout">Checkout</button>
+    <button @click="checkout" :disabled="isCartEmpty">Checkout</button>
     <p v-if="checkoutStatus">{{ checkoutStatus }}</p>
   </div>
 </template>
@@ -28,7 +28,8 @@ export default {
     }),
     ...mapGetters({
       carrito: 'productsOnCart',
-      total: 'cartTotal'
+      total: 'cartTotal',
+      isCartEmpty: 'isCartEmpty'
     }),
     // carrito() {
     //   return this.$store.getters.productsOnCart;
