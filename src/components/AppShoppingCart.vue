@@ -5,34 +5,47 @@
     <p v-if="carrito.length === 0">Carrito vacio</p>
     <ul v-else>
       <li v-for="productItem in carrito" :key="productItem.id">
-        {{ productItem.title }} ({{productItem.quantity}})
+        {{ productItem.title }} ({{ productItem.quantity }})
         <button @click="disminuirCantidadDelProductoCarrito(productItem)">-</button>
         &nbsp;
         <button @click="eliminarProductoCarrito(productItem)">X</button>
       </li>
     </ul>
     <p>Total: ${{ total }} </p>
-  <button @click="$store.dispatch('checkout')">Checkout</button>
-    <p v-if="$store.state.checkoutStatus">{{$store.state.checkoutStatus}}</p>
+    <button @click="checkout">Checkout</button>
+    <p v-if="checkoutStatus">{{ checkoutStatus }}</p>
   </div>
 </template>
 
 <script>
+import {mapActions, mapGetters, mapState} from "vuex";
+
 export default {
   name: "AppShoppingCart",
   computed: {
-    carrito() {
-      return this.$store.getters.productsOnCart;
-    },
-    total(){
-      return this.$store.getters.cartTotal;
-    }
+    ...mapState({
+      checkoutStatus: 'checkoutStatus'
+    }),
+    ...mapGetters({
+      carrito: 'productsOnCart',
+      total: 'cartTotal'
+    }),
+    // carrito() {
+    //   return this.$store.getters.productsOnCart;
+    // },
+    // total(){
+    //   return this.$store.getters.cartTotal;
+    // }
   },
   methods: {
-    eliminarProductoCarrito(productItem) {
-      this.$store.dispatch('removeProductFromCart', productItem);
-    },
-    disminuirCantidadDelProductoCarrito(productItem){
+    ...mapActions({
+      eliminarProductoCarrito: 'removeProductFromCart',
+      checkout: 'checkout'
+    }),
+    // eliminarProductoCarrito(productItem) {
+    //   this.$store.dispatch('removeProductFromCart', productItem);
+    // },
+    disminuirCantidadDelProductoCarrito(productItem) {
       this.$store.dispatch('decrementItemQuantity', productItem);
     }
   },

@@ -20,7 +20,9 @@
 </template>
 
 <script>
-import store from "../store/index";
+// import store from "../store/index";
+import { mapActions, mapGetters, mapState } from "vuex";
+
 
 export default {
   name: "AppProductList",
@@ -30,23 +32,33 @@ export default {
     }
   },
   computed: {
-    productos() {
-      return store.state.productos;
-      // return store.getters.productsOnStock;
-    },
-    productIsInStock(){
-      return this.$store.getters.productIsInStock;
-    }
+    ...mapState({
+      productos: 'productos'
+    }),
+    // productos() {
+    //   return store.state.productos;
+    //   // return store.getters.productsOnStock;
+    // },
+    ...mapGetters([
+      'productIsInStock'
+    ])
+    // productIsInStock(){
+    //   return this.$store.getters.productIsInStock;
+    // }
   },
   methods: {
-    addToCart(product) {
-      store.dispatch('addProductToCart', product);
-    }
+    ...mapActions({
+      addToCart: 'addProductToCart',
+      getProducts: 'getProducts'
+    })
+    // addToCart(product) {
+    //   store.dispatch('addProductToCart', product);
+    // }
   },
   async created() {
     try {
       this.loading = true;
-      await store.dispatch("getProducts");
+      await this.getProducts();
       this.loading = false;
     } catch (error) {
       console.error(error);
